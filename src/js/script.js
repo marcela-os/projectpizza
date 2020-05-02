@@ -81,6 +81,7 @@
 			thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
 			thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
 			thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+			thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
 		}
 		initAccordion(){
 			const thisProduct = this;
@@ -130,10 +131,10 @@
 			const formData = utils.serializeFormToObject(thisProduct.form)
 
 			let price = thisProduct.data.price;
-
+			//pętla iterująca po parametrach
 			for (let paramId in thisProduct.data.params) {
 				const param = thisProduct.data.params[paramId];
-
+				//pętla iterująca po opcjach parametru
 				for (let optionId in param.options) {
 					const option = param.options[optionId];
 					//co robi ta const? - sprawdzamy, czy istnieje formData[paramId], a jeśli tak, to czy ta tablica zawiera klucz równy wartości optionId
@@ -144,11 +145,28 @@
 					} else if (!optionSelected && option.default) {
 						price -= option.price; // deduct price
 					}
+					
+					const images = thisProduct.imageWrapper;
+					const imageVisible = classNames.menuProduct.imageVisible;
+					//const z wyszukiwanymi elementami
+					const optionImages = images.querySelectorAll('.' + paramId + '-' + optionId);
+					console.log('wyszukiwane', optionImages);
+					//if - ma sprawdzac czy opcja została dodana
+					// w if i w else ma być pętla iterująca po znalezionych elementach
+					if(optionSelected){
+						for (let image of optionImages) {
+							image.classList.add(imageVisible);
+						}
+					} else if (!optionSelected){
+						for (let image of optionImages) {
+							image.classList.remove(imageVisible);
+						}
+					}
 				}
 			}
 			/* set the contents of thisProduct.priceElem to be the value of variable price */
-			thisProduct.priceElem = price;
-			console.log('thisProduct.priceElem', thisProduct.priceElem);
+			//thisProduct.priceElem = price;
+			thisProduct.priceElem.innerHTML = price;
 		}
 	}
 
