@@ -90,7 +90,7 @@
       thisProduct.initAmountWidget();
       thisProduct.processOrder();
 
-      console.log('newProduct', thisProduct);
+      //console.log('newProduct', thisProduct);
     }
     renderInMenu(){
       const thisProduct = this;
@@ -240,8 +240,8 @@
       thisWidget.setValue(thisWidget.input.value);
       thisWidget.initActions();
 
-      console.log('amountWidget', thisWidget);
-      console.log('constructor arguments:', element);
+      //console.log('amountWidget', thisWidget);
+      //console.log('constructor arguments:', element);
     }
     getElements(element){
       const thisWidget = this;
@@ -293,8 +293,9 @@
       thisCart.products = [];
       thisCart.getElements(element);
       thisCart.initActions();
+      thisCart.deliveryFee = settings.cart.defaultDeliveryFee;
 
-      console.log('newCart', thisCart);
+      //console.log('newCart', thisCart);
     }
     getElements(element){
       const thisCart = this;
@@ -320,14 +321,76 @@
       const generatedDOM = utils.createDOMFromHTML(generatedHTML); // tworzę element DOM
       thisCart.dom.productList.appendChild(generatedDOM); // dodaje te elementy DOM do thisCart.dom.productList
 
-      console.log('adding product', menuProduct);
+      //console.log('adding product', menuProduct);
+
+      thisCart.products.push(new CartProduct(menuProduct, generatedDOM)); // tworzymy nową instancję klasy new CartProduct oraz dodamy ją do tablicy thisCart.products
+      console.log('thisCart.products', thisCart.products);
+
+      thisCart.update();
+    }
+    update(){
+      const thisCart = this;
+      thisCart.totalNumber = 0;
+      thisCart.subtotalPrice = 0;
+
+      for (let element of thisCart.products) {
+        //element.singlePrice = thisCart.subtotalPrice + element.price;
+        thisCart.subtotalPrice += element.price;
+        thisCart.totalNumber += element.amount;
+      }
+      thisCart.totalPrice = thisCart.subtotalPrice + thisCart.deliveryFee;
+      console.log('totalNumber', thisCart.totalNumber);
+      console.log('subtotalPrice',thisCart.subtotalPrice);
+      console.log('dostawa', thisCart.deliveryFee);
+      console.log('z dostawą',thisCart.totalPrice);
+
+    }
+  }
+
+  class CartProduct{
+    constructor(menuProduct, element){
+      const thisCartProduct = this;
+
+      thisCartProduct.id = menuProduct.id;
+      thisCartProduct.name = menuProduct.name;
+      thisCartProduct.price = menuProduct.price;
+      thisCartProduct.priceSingle = menuProduct.priceSingle;
+      thisCartProduct.amount = menuProduct.amount;
+      thisCartProduct.params = JSON.parse(JSON.stringify(menuProduct.params));
+      thisCartProduct.getElements(element);
+      thisCartProduct.initAmountWidget();
+
+
+      //console.log('newCartProduct', thisCartProduct);
+      //console.log('productData', menuProduct);
+    }
+    getElements(element){
+      const thisCartProduct = this;
+
+      thisCartProduct.dom = {};
+      thisCartProduct.dom.wrapper = element;
+      thisCartProduct.dom.amountWidget = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.amountWidget);
+      thisCartProduct.dom.price = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.price);
+      thisCartProduct.dom.edit = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.edit);
+      thisCartProduct.dom.remove = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.remove);
+    }
+    initAmountWidget(){
+      const thisCartProduct = this;
+
+      thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidget);
+
+      thisCartProduct.dom.amountWidget.addEventListener('updated' , function() {
+        thisCartProduct.amount =thisCartProduct.amountWidget.value;
+        thisCartProduct.price = thisCartProduct.priceSingle*thisCartProduct.amount; //cena pojedynczego produktu przez ilość w koszyku
+        thisCartProduct.dom.price.innerHTML = thisCartProduct.price; //wyświetlenie ceny produktu w koszyku
+      });
     }
   }
 
   const app = {
     initMenu: function(){
       const thisApp = this;
-      console.log('thisApp.data', thisApp.data);
+      //console.log('thisApp.data', thisApp.data);
 
       for(let productData in thisApp.data.products){
         new Product(productData, thisApp.data.products[productData]);
