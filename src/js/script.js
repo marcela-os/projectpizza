@@ -281,7 +281,9 @@
     announce(){
       const thisWidget = this;
 
-      const event = new Event('updated');
+      const event = new CustomEvent('updated', {
+        bubbles: true  /* włączamy jego właściwość bubbles, dzięki czemu ten event po wykonaniu na jakimś elemencie będzie przekazany jego rodzicowi, oraz rodzicowi rodzica, i tak dalej */
+      });
       thisWidget.element.dispatchEvent(event);
     }
   }
@@ -306,12 +308,25 @@
 
       thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
       thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.cart.productList);
+      // Tworzymy tablicę, która zawiera cztery stringi (ciągi znaków). Każdy z nich jest kluczem w obiekcie select.cart. Wykorzystamy ją aby stworzyć cztery właściwości obiektu thisCart.dom o tych samych kluczach.
+      thisCart.renderTotalsKeys = ['totalNumber', 'totalPrice', 'subtotalPrice', 'deliveryFee'];
+
+      for(let key of thisCart.renderTotalsKeys){
+        thisCart.dom[key] = thisCart.dom.wrapper.querySelectorAll(select.cart[key]);
+      }
     }
     initActions(){
       const thisCart = this;
 
       thisCart.dom.toggleTrigger.addEventListener('click' , function() {
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive); /*classList.toggle - przełączanie klas na elemencie*/
+      });
+      //aktualizujemy cenę w koszyku po zmianie ilości i dodawaniu nowych produktów
+      thisCart.dom.productList.addEventListener('updated', function() {
+        thisCart.update();
+      });
+      thisCart.dom.productList.addEventListener('remove', function (){  // wychwycenie eventu remove i obserwowuje element productList
+        thisCart.remove(event.detail.cartProduct);
       });
     }
     add(menuProduct){
@@ -344,6 +359,19 @@
       console.log('dostawa', thisCart.deliveryFee);
       console.log('z dostawą',thisCart.totalPrice);
 
+      for (let key of thisCart.renderTotalsKeys){
+        for(let elem of thisCart.dom[key]){
+          elem.innerHTML = thisCart[key];
+        }
+      }
+    }
+    remove(cartProduct){
+      const thisCart = this;
+      const index = thisCart.products.indexOf('cartProduct');
+      thisCart.products.splice(CartProduct, 1);
+      cartProduct.dom.wrapper.remove();
+
+      thisCart.update();
     }
   }
 
@@ -359,6 +387,7 @@
       thisCartProduct.params = JSON.parse(JSON.stringify(menuProduct.params));
       thisCartProduct.getElements(element);
       thisCartProduct.initAmountWidget();
+      thisCartProduct.initActions();
 
 
       //console.log('newCartProduct', thisCartProduct);
@@ -383,6 +412,28 @@
         thisCartProduct.amount =thisCartProduct.amountWidget.value;
         thisCartProduct.price = thisCartProduct.priceSingle*thisCartProduct.amount; //cena pojedynczego produktu przez ilość w koszyku
         thisCartProduct.dom.price.innerHTML = thisCartProduct.price; //wyświetlenie ceny produktu w koszyku
+      });
+    }
+    remove(){
+      const thisCartProduct = this;
+
+      const event = new CustomEvent ('remove', {
+        bubbles: true,
+        detail: {
+          cartProduct: thisCartProduct, /* w detail możemy przekazać dowolne informacje do handlera eventu. tu przekazujemy odwołanie do tej instancji, dla której kliknięto guzik usuwania. */
+        },
+      });
+      thisCartProduct.dom.wrapper.dispatchEvent(event);
+    }
+    initActions(){
+      const thisCartProduct = this;
+
+      thisCartProduct.dom.edit.addEventListener('click', function(){
+        event.preventDefault();
+      });
+      thisCartProduct.dom.remove.addEventListener('click', function(){
+        event.preventDefault();
+        thisCartProduct.remove();
       });
     }
   }
