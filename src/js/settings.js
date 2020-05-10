@@ -59,7 +59,7 @@ export const classNames = {
 
 export const settings = {
   db: {
-    url: '//localhost:8081',
+    url: '//localhost:3031',
     product: 'product',
     order: 'order',
   },
