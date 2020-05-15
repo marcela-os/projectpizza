@@ -109,8 +109,8 @@ class Cart{
       products: []
     };
     for (let element of thisCart.products) {
-      element.getData();
-      payload.products.push(element);
+      let sendElement = element.getData();
+      payload.products.push(sendElement);
     }
     const options = { /* zawiera opcje, które skonfigurują zapytanie */
       method: 'POST',
