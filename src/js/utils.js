@@ -1,6 +1,6 @@
 /* global Handlebars, dataSource */
 
-const utils = {}; // eslint-disable-line no-unused-vars
+export const utils = {};
 
 utils.createDOMFromHTML = function(htmlString) {
   let div = document.createElement('div');
@@ -35,13 +35,11 @@ utils.serializeFormToObject = function(form){
   }
   return output;
 };
-
 utils.queryParams = function(params){
   return Object.keys(params)
     .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
     .join('&');
 };
-
 
 utils.convertDataSourceToDbJson = function(){
   const productJson = [];
@@ -72,6 +70,7 @@ utils.addDays = function(dateStr, days){
   return dateObj;
 };
 
+
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
   return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 });
@@ -79,5 +78,3 @@ Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
 Handlebars.registerHelper('joinValues', function(input, options) {
   return Object.values(input).join(options.fn(this));
 });
-
-export default utils;

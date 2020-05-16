@@ -1,3 +1,5 @@
+/* global Handlebars */
+
 export const select = {
   templateOf: {
     menuProduct: '#template-menu-product',
@@ -107,7 +109,7 @@ export const settings = {
     tableIdAttribute: 'data-table',
   },
   db: {
-    url: '//localhost:3031',
+    url: '//localhost:3130',
     product: 'product',
     order: 'order',
     booking: 'booking',

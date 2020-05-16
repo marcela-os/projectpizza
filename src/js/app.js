@@ -1,8 +1,62 @@
-import {settings, select} from './settings.js';
+import {settings, select, classNames} from './settings.js';
 import Product from './components/Product.js';
 import Cart from './components/Cart.js';
+import Booking from './components/Booking.js';
 
 const app = {
+  initPages: function(){
+    const thisApp = this;
+
+    thisApp.pages = document.querySelector(select.containerOf.pages).children; /*będziemy wyszukiwać kontener zawieracjący wszystkie strony. Children - ma przechowywać kontener podstron, dzięki temu znajdą się wszystkie dzieci kontenera stron */
+    thisApp.navLinks = document.querySelectorAll(select.nav.links);
+
+    const idFromHash = window.location.hash.replace('#/', '');
+
+    let pageMatchingHash = thisApp.pages[0].id; /* [0] - za pomocą 0 wybieramy pierwszą z podstron.  .id - wydobywamy jej id */
+    for(let page of thisApp.pages){
+      if(page.id == idFromHash){  /*dla każdej strony sprawdzamy czy strony czy jej id jest = wydobytemu hasha ze strony */
+        pageMatchingHash = page.id;
+        break; /*break przerywa pętle, kończy iterację po pętli jeśli warunek został spełniony */
+      }
+    }
+    thisApp.activatePage(pageMatchingHash); /* aktywujemy odpowiednią podstronę */
+
+    for(let link of thisApp.navLinks){
+      link.addEventListener('click', function(event){
+        const clickedElement = this;
+        event.preventDefault();
+
+        const id = clickedElement.getAttribute('href').replace('#', ''); /*get page id from href attribute */
+        thisApp.activatePage(id); /* run thisApp.activatePage with that id */
+        /* change URL hash - zmieniamy adres strony zależnie od teo jaką podstronę mamy włączoną*/
+        window.location.hash = '#/' + id; /* jak jest samo # to strona się przewija, jak dodamy #/ to strona przestaje się przewijać */
+      });
+    }
+  },
+
+  activatePage: function(pageId){
+    const thisApp = this;
+
+    /* add class "active" to matching pages, remove from non-matching */
+    /*for(let page of thisApp.pages){
+      if(page.id == pageId){
+        page.classList.add(classNames.pages.active);
+      } else {
+        page.classList.remove(classNames.pages.active);
+      }
+    } - niżej zapisane to samo ale w 1 linijce. niżej za pomocą 2 argumentu kontrolujemy czy klasa zostanie nadana czy nie */
+    for(let page of thisApp.pages){
+      page.classList.toggle(classNames.pages.active, page.id == pageId);
+    }
+    /* add class "active" to matching links, remove from non-matching */
+    for(let link of thisApp.navLinks){
+      link.classList.toggle(
+        classNames.nav.active,
+        link.getAttribute('href') == '#' + pageId
+      );
+    }
+  },
+
   initMenu: function(){
     const thisApp = this;
     //console.log('thisApp.data', thisApp.data);
@@ -46,6 +100,13 @@ const app = {
     });
   },
 
+  initBooking: function(){
+    const thisApp = this;
+
+    const bookingWrapper = document.querySelector(select.containerOf.booking);
+    thisApp.booking = new Booking(bookingWrapper);
+  },
+
   init: function(){
     const thisApp = this;
     //console.log('*** App starting ***');
@@ -54,8 +115,10 @@ const app = {
     //console.log('settings:', settings);
     //console.log('templates:', templates);
 
+    thisApp.initPages();
     thisApp.initData();
     thisApp.initCart();
+    thisApp.initBooking();
   },
 };
 
