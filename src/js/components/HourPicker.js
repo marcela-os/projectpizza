@@ -34,7 +34,7 @@ class HourPicker extends BaseWidget{
   renderValue(){
     const thisWidget = this;
 
-    thisWidget.dom.output = thisWidget.value; /* ma zamieniać zawartość elementu thisWidget.dom.output na wartość widgetu */
+    thisWidget.dom.output.innerHTML = thisWidget.value; /* ma zamieniać zawartość elementu thisWidget.dom.output na wartość widgetu */
   }
 
 }
