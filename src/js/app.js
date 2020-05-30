@@ -2,6 +2,7 @@ import {settings, select, classNames} from './settings.js';
 import Product from './components/Product.js';
 import Cart from './components/Cart.js';
 import Booking from './components/Booking.js';
+import Carousel from './components/Carousel.js';
 
 const app = {
   initPages: function(){
@@ -9,6 +10,7 @@ const app = {
 
     thisApp.pages = document.querySelector(select.containerOf.pages).children; /*będziemy wyszukiwać kontener zawieracjący wszystkie strony. Children - ma przechowywać kontener podstron, dzięki temu znajdą się wszystkie dzieci kontenera stron */
     thisApp.navLinks = document.querySelectorAll(select.nav.links);
+    thisApp.navSubpage = document.querySelectorAll(select.nav.subpage);
 
     const idFromHash = window.location.hash.replace('#/', '');
 
@@ -22,18 +24,21 @@ const app = {
     thisApp.activatePage(pageMatchingHash); /* aktywujemy odpowiednią podstronę */
 
     for(let link of thisApp.navLinks){
-      link.addEventListener('click', function(event){
-        const clickedElement = this;
-        event.preventDefault();
-
-        const id = clickedElement.getAttribute('href').replace('#', ''); /*get page id from href attribute */
-        thisApp.activatePage(id); /* run thisApp.activatePage with that id */
-        /* change URL hash - zmieniamy adres strony zależnie od teo jaką podstronę mamy włączoną*/
-        window.location.hash = '#/' + id; /* jak jest samo # to strona się przewija, jak dodamy #/ to strona przestaje się przewijać */
-      });
+      link.addEventListener('click', thisApp.onLinkClick.bind(thisApp));
+    }
+    for(let subpage of thisApp.navSubpage){
+      subpage.addEventListener('click', thisApp.onLinkClick.bind(thisApp));
     }
   },
+  onLinkClick: function(event){
+    const clickedElement = event.currentTarget;
+    event.preventDefault();
 
+    const id = clickedElement.getAttribute('href').replace('#', ''); /*get page id from href attribute */
+    this.activatePage(id); /* run thisApp.activatePage with that id */
+    /* change URL hash - zmieniamy adres strony zależnie od teo jaką podstronę mamy włączoną*/
+    window.location.hash = '#/' + id; /* jak jest samo # to strona się przewija, jak dodamy #/ to strona przestaje się przewijać */
+  },
   activatePage: function(pageId){
     const thisApp = this;
 
@@ -53,6 +58,12 @@ const app = {
       link.classList.toggle(
         classNames.nav.active,
         link.getAttribute('href') == '#' + pageId
+      );
+    }
+    for(let subpage of thisApp.navSubpage){
+      subpage.classList.toggle(
+        classNames.nav.active,
+        subpage.getAttribute('href') == '#' + pageId
       );
     }
   },
@@ -107,6 +118,14 @@ const app = {
     thisApp.booking = new Booking(bookingWrapper);
   },
 
+  initCarousel: function(){
+    const thisApp = this;
+
+    const carouselElement = document.querySelector(select.carousel.element);
+    thisApp.carousel = new Carousel();
+    //console.log('testApp', carouselElement);
+  },
+
   init: function(){
     const thisApp = this;
     //console.log('*** App starting ***');
@@ -119,6 +138,7 @@ const app = {
     thisApp.initData();
     thisApp.initCart();
     thisApp.initBooking();
+    thisApp.initCarousel();
   },
 };
 

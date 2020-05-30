@@ -66,7 +66,12 @@ export const select = {
   },
   nav: {
     links: '.main-nav a',
+    subpage: '.first .box a',
   },
+  carousel:{
+    element: '.carousel-slide .carousel-item',
+    dots: 'carousel-dots i'
+  }
 };
 
 export const classNames = {
