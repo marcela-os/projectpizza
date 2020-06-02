@@ -70,8 +70,8 @@ export const select = {
   },
   carousel:{
     element: '.carousel-slide .carousel-item',
-    dots: 'carousel-dots i'
-  }
+    dots: '.carousel-dots i',
+  },
 };
 
 export const classNames = {

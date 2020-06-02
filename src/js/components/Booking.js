@@ -59,9 +59,9 @@ class Booking {
         ]);
       })
       .then(function([bookings, eventsCurrent, eventsRepeat]){   /*odpowiedź z serwera po przetworzeniu json na tablice lub obiekt */
-        //console.log(bookings);
-        //console.log(eventsCurrent);
-        //console.log(eventsRepeat);
+        console.log(bookings);
+        console.log(eventsCurrent);
+        console.log(eventsRepeat);
         thisBooking.parseData(bookings, eventsCurrent, eventsRepeat);
       });
   }
@@ -87,8 +87,8 @@ class Booking {
         }
       }
     }
-    //console.log('thisBooking.booked', thisBooking.booked);
-
+    console.log('thisBooking.booked', thisBooking.booked);
+    thisBooking.sliderColor();
     thisBooking.updateDOM();
   }
 
@@ -101,8 +101,7 @@ class Booking {
 
     const startHour = utils.hourToNumber(hour);
 
-
-
+		console.log(date, hour, duration, table);
     for(let hourBlock = startHour; hourBlock < startHour + duration; hourBlock += 0.5){
       //console.log('loop', hourBlock);
 
@@ -145,8 +144,6 @@ class Booking {
         table.classList.remove(classNames.booking.tableBooked);
       }
 
-
-
       table.addEventListener('click' , function() {
         table.classList.toggle(classNames.booking.tableBooked);
         if (table.classList.contains(classNames.booking.tableBooked)){
@@ -157,6 +154,31 @@ class Booking {
       });
     }
   }
+
+  sliderColor(){
+    const thisBooking = this;
+    const hoursAmount = thisBooking.booked[thisBooking.datePicker.correctValue];
+
+    //console.log(Object.values(hoursAmount));
+    const newArray = Object.values(hoursAmount);
+    const element = document.querySelector('.range-slider');
+    const sliders = [];
+
+    for (let i in newArray) {
+      if (newArray[i].length == 3){
+        sliders.push('/*' + newArray + '*/red ');
+      } else if (newArray[i].length == 2){
+        sliders.push('/*' + newArray + '*/orange ');
+      } else if(newArray[i].length == 1 || newArray[i].length == 0){
+        sliders.push('/*' + newArray + '*/green ');
+      }
+    }
+    sliders.sort();
+    let newSliders = sliders.join();
+    let newSlidersGradient = 'linear-gradient(to right, ' + newSliders + ')';
+    element.style.background = newSlidersGradient;
+  }
+
 
   render(bookingWrapper){
     const thisBooking = this;
@@ -192,15 +214,13 @@ class Booking {
 
     const payload = { /* dane, które będą wysłane do serwera */
 
-      people: thisBooking.peopleAmount.value,
+      ppl: thisBooking.peopleAmount.value,
       duration:  thisBooking.hoursAmount.value,
       date: thisBooking.datePicker.value,
       hour: thisBooking.hourPicker.value,
       table: thisBooking.tableChoose,
-      adress: thisBooking.dom.address,
-      phone: thisBooking.dom.phone,
     };
-    
+
     const options = { /* zawiera opcje, które skonfigurują zapytanie */
       method: 'POST',
       headers: {

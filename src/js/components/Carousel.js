@@ -13,24 +13,28 @@ class Carousel{
 
 
     thisElement.carousel = document.querySelectorAll(select.carousel.element);
-    //thisElement.dots = document.querySelectorAll(select.carousel.dots);
+    thisElement.dots = document.querySelectorAll(select.carousel.dots);
+
     let allCarousels = thisElement.carousel;
+    let item = 0;
 
-
-    console.log('allCarousels',allCarousels[0]);
-    console.log('allCarousels2',allCarousels[1]);
-    console.log('allCarousels3', allCarousels[2]);
+    allCarousels[item].classList.add('active');
+    thisElement.dots[item].classList.add('fas');
 
     function nextItem (){
-      for (let item = 0; item < allCarousels.length; item++){
-        allCarousels[item].classList.remove('active');
-        //thisElement.dots[item].classList.remove('active');
-        item = (item + 1);
-        allCarousels[item].classList.add('active');
-        //thisElement.dots[item].classList.add('active');
+      allCarousels[item].classList.remove('active');
+      thisElement.dots[item].classList.remove('fas');
+
+      item = item + 1;
+
+      if (item >= 3){
+        item = 0;
       }
+
+      allCarousels[item].classList.add('active');
+      thisElement.dots[item].classList.add('fas');
     }
-    setTimeout(nextItem,3000);
+    setInterval(nextItem,3000);
   }
 }
 

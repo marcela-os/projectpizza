@@ -59,7 +59,7 @@
 
 .rangeSlider {
   top: $base-size;
-  background: lighten($color-dark, 70%);
+  //background: lighten($color-dark, 70%);
   box-shadow: none;
   height: $base-size;
 
@@ -77,13 +77,13 @@
       width: ($base-size * 2);
       height: ($base-size * 2);
       top: -6px;
-      background: $color-dark;
+      //background: $color-dark;
     }
 
   }
 
   &__fill {
-    background: $color-success;
+    background: transparent;
     transition-timing-function: cubic-bezier(0, 1, 0, 1);
     transition: width 100ms;
     box-shadow: none;
