@@ -33,15 +33,16 @@ class DatePicker extends BaseWidget {
         }
       ],
 
-      onChange: function(dateStr) { /* w momencie wykrycia zmiany wartości przez plugin, chcemy ustawiać wartość właściwości */
+      onChange: function(selectedDates, dateStr) { /* w momencie wykrycia zmiany wartości przez plugin, chcemy ustawiać wartość właściwości */
         thisWidget.value = dateStr;
       }
     });
   }
 
   parseValue(nextValue){
-    return parseInt(nextValue);
+    return nextValue;
   }
+
 
   isValid(){
     return true
