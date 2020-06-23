@@ -101,7 +101,7 @@ class Booking {
 
     const startHour = utils.hourToNumber(hour);
 
-		console.log(date, hour, duration, table);
+    console.log(date, hour, duration, table);
     for(let hourBlock = startHour; hourBlock < startHour + duration; hourBlock += 0.5){
       //console.log('loop', hourBlock);
 
@@ -161,20 +161,27 @@ class Booking {
 
     //console.log(Object.values(hoursAmount));
     const newArray = Object.values(hoursAmount);
-    const element = document.querySelector('.range-slider');
+    const element = thisBooking.dom.wrapper.querySelector('.rangeSlider');
     const sliders = [];
 
+
+
     for (let i in newArray) {
-      if (newArray[i].length == 3){
-        sliders.push('/*' + newArray + '*/red ');
-      } else if (newArray[i].length == 2){
-        sliders.push('/*' + newArray + '*/orange ');
-      } else if(newArray[i].length == 1 || newArray[i].length == 0){
-        sliders.push('/*' + newArray + '*/green ');
+      const first = ((i - 12) * 100) / 12;
+      const second = (((i - 12) + .5) * 100) / 12;
+
+      if (i < 24){
+        if(newArray[i].length <= 1 ){
+          sliders.push('/*' + i + '*/green ' + first + '%, green ' + second + '%');
+        }	else if (newArray[i].length === 2){
+          sliders.push('/*' + i + '*/orange ' + first + '%, orange ' + second + '%');
+        }	else if (newArray[i].length === 3){
+          sliders.push('/*' + i + '*/red ' + first + '%, red ' + second + '%');
+        }
       }
     }
     sliders.sort();
-    let newSliders = sliders.join();
+    const newSliders = sliders.join();
     let newSlidersGradient = 'linear-gradient(to right, ' + newSliders + ')';
     element.style.background = newSlidersGradient;
   }
