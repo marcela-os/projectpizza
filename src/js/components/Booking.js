@@ -164,8 +164,6 @@ class Booking {
     const element = thisBooking.dom.wrapper.querySelector('.rangeSlider');
     const sliders = [];
 
-
-
     for (let i in newArray) {
       const first = ((i - 12) * 100) / 12;
       const second = (((i - 12) + .5) * 100) / 12;
